@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}PikPak 云盘 - VideoApp{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8 mx-auto text-center">
+        <h1 class="text-info">PikPak 云盘</h1>
+        <p class="lead text-light">通过 PikPak 云盘直接访问和播放您的在线视频</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mx-auto">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title mb-4 text-warning"><i class="bi bi-person-lock"></i> 登录您的 PikPak 账号</h5>
+                
+                <form action="{% url 'pikpak:login' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="email" class="form-label text-light">电子邮箱</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label text-light">密码</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-danger">登录</button>
+                    </div>
+                </form>
+                
+                <div class="text-center mt-3">
+                    <a href="{% url 'pikpak:files' %}" class="text-info">访客模式浏览</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title text-warning">什么是 PikPak?</h5>
+                <p class="card-text text-light">
+                    PikPak 是一款云存储应用，允许用户存储和管理各种文件，特别适合视频内容。通过 VideoApp 与 PikPak 的集成，您可以直接播放存储在 PikPak 中的视频，无需下载到本地设备。
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}文件列表 - PikPak - VideoApp{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>PikPak 文件</h1>
+    <div>
+        <button class="btn btn-outline-light me-2">
+            <i class="bi bi-arrow-clockwise"></i> 刷新
+        </button>
+        <a href="{% url 'pikpak:home' %}" class="btn btn-outline-light">
+            <i class="bi bi-gear"></i> 账号设置
+        </a>
+    </div>
+</div>
+
+<nav aria-label="breadcrumb" class="mb-4">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item active"><a href="{% url 'pikpak:files' %}" class="text-decoration-none text-light">根目录</a></li>
+  </ol>
+</nav>
+
+{% if files %}
+    <div class="table-responsive">
+        <table class="table table-dark table-hover">
+            <thead>
+                <tr>
+                    <th>名称</th>
+                    <th>类型</th>
+                    <th>大小</th>
+                    <th>修改日期</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for file in files %}
+                <tr>
+                    <td>
+                        {% if file.type == 'folder' %}
+                            <i class="bi bi-folder text-warning me-2"></i>
+                            <a href="{% url 'pikpak:files' %}?folder={{ file.id }}" class="text-decoration-none text-light">
+                                {{ file.name }}
+                            </a>
+                        {% else %}
+                            <i class="bi bi-film text-info me-2"></i>
+                            {{ file.name }}
+                        {% endif %}
+                    </td>
+                    <td>{{ file.type|title }}</td>
+                    <td>{{ file.size|default:'-' }}</td>
+                    <td>{{ file.modified }}</td>
+                    <td>
+                        {% if file.type != 'folder' %}
+                            <a href="{% url 'pikpak:play' file.id %}" class="btn btn-sm btn-danger">
+                                <i class="bi bi-play-fill"></i> 播放
+                            </a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="alert alert-secondary">
+        <p class="mb-0">没有找到文件。请确保您已登录，并且您的 PikPak 账号中有文件。</p>
+    </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ video.title }} - VideoApp{% endblock %}
+
+{% block extra_css %}
+<link href="https://vjs.zencdn.net/7.20.3/video-js.css" rel="stylesheet" />
+<style>
+    .video-container {
+        position: relative;
+        width: 100%;
+        background: #000;
+        border-radius: 6px;
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
+    .video-js {
+        width: 100%;
+        height: 0;
+        padding-top: 56.25%; /* 16:9 比例 */
+    }
+    .video-vertical {
+        max-width: 40%;  /* 竖屏视频最大宽度 */
+        margin: 0 auto;
+    }
+    .video-info {
+        background-color: #181818;
+        border-radius: 6px;
+        padding: 20px;
+        margin-top: 20px;
+    }
+    .video-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+    .btn-outline-light {
+        border-color: #404040;
+    }
+    .btn-outline-light:hover {
+        background-color: #333;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="{% url 'vplayer:video_list' %}" class="text-decoration-none text-muted">
+        <i class="bi bi-arrow-left"></i> 返回视频列表
+    </a>
+</div>
+
+<div class="video-container">
+    <video
+        id="my-video"
+        class="video-js vjs-big-play-centered vjs-theme-netflix"
+        controls
+        preload="auto"
+        poster="{% if video.thumbnail %}{{ video.thumbnail.url }}{% else %}/static/img/default-thumbnail.jpg{% endif %}"
+    >
+        <!-- 修改源URL使用视频流路由 -->
+        <source src="{% url 'vplayer:video_stream' video.id %}" type="video/mp4" />
+        <p class="vjs-no-js">
+            要查看此视频，请启用JavaScript，并考虑升级到支持HTML5视频的浏览器
+        </p>
+    </video>
+</div>
+
+<div class="video-info">
+    <h1 class="text-info">{{ video.title }}</h1>
+    <p class="text-muted">时长: {{ video.duration }} | 上传时间: {{ video.created_at|date:"Y-m-d H:i" }}</p>
+    
+    <div class="mt-4">
+        <h5 class="text-warning">描述</h5>
+        <p class="text-light">{{ video.description|linebreaks|default:"无描述" }}</p>
+    </div>
+    
+    <!-- 移除编辑和删除按钮，仅为管理员显示管理链接 -->
+    {% if user.is_staff %}
+    <div class="mt-4">
+        <a href="{% url 'admin:vplayer_video_change' video.pk %}" class="btn btn-sm btn-outline-light" target="_blank">
+            <i class="bi bi-pencil"></i> 在管理界面中编辑
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var player = videojs('my-video', {
+            controls: true,
+            autoplay: false,
+            preload: 'auto',
+            fluid: true,
+            responsive: true,
+            playbackRates: [0.5, 1, 1.5, 2]
+        });
+        
+        // 处理竖屏视频
+        player.on('loadedmetadata', function() {
+            var video = player.tech().el();
+            var aspectRatio = video.videoWidth / video.videoHeight;
+            
+            // 如果宽高比小于0.8，认为是竖屏视频
+            if (aspectRatio < 0.8) {
+                player.el().parentNode.classList.add('video-vertical');
+            } else {
+                player.el().parentNode.classList.remove('video-vertical');
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}VideoApp - 视频列表{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>视频库</h1>
+    <button class="btn btn-danger">
+        <i class="bi bi-plus-lg"></i> 添加视频
+    </button>
+</div>
+
+{% if videos %}
+    <div class="row">
+        {% for video in videos %}
+            <div class="col-md-3 mb-4">
+                <a href="{% url 'videoapp:video_detail' video.id %}" class="text-decoration-none text-white">
+                    <div class="video-card">
+                        <img src="{% if video.thumbnail %}{{ video.thumbnail }}{% else %}/static/img/default-thumbnail.jpg{% endif %}" 
+                             alt="{{ video.title }}" class="img-fluid">
+                        <span class="video-duration">{{ video.duration }}</span>
+                    </div>
+                    <h5 class="video-title">{{ video.title }}</h5>
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-secondary">
+        <p class="mb-0">您的视频库是空的。点击"添加视频"按钮开始构建您的个人视频库。</p>
+    </div>
+{% endif %}
+{% endblock %}

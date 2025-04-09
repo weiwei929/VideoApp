@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}VideoApp - 个人视频管理系统{% endblock %}
+
+{% block content %}
+<div class="row mb-5">
+    <div class="col-md-8 mx-auto text-center">
+        <h1 class="display-4 mb-4">欢迎使用 VideoApp</h1>
+        <p class="lead">您的个人视频管理与播放中心，支持本地视频和 PikPak 云盘</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-body d-flex flex-column">
+                <h3 class="card-title text-warning"><i class="bi bi-collection-play"></i> 本地视频</h3>
+                <p class="card-text flex-grow-1 text-light">浏览、管理和播放您的本地视频文件。支持多种视频格式，提供流畅的播放体验。</p>
+                <a href="{% url 'vplayer:video_list' %}" class="btn btn-danger mt-3">浏览本地视频</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-body d-flex flex-column">
+                <h3 class="card-title text-info"><i class="bi bi-cloud"></i> PikPak 云盘</h3>
+                <p class="card-text flex-grow-1 text-light">通过 PikPak 云盘直接访问和播放您的在线视频内容，无需下载即可观看高清视频。</p>
+                <a href="{% url 'pikpak:home' %}" class="btn btn-danger mt-3">连接 PikPak</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 管理员界面链接 -->
+{% if user.is_staff %}
+<div class="row mt-4">
+    <div class="col-12 text-center">
+        <a href="{% url 'admin:vplayer_video_changelist' %}" class="btn btn-outline-light">
+            <i class="bi bi-gear"></i> 视频管理界面
+        </a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

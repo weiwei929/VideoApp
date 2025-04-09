@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ video.title }} - VideoApp{% endblock %}
+
+{% block extra_css %}
+<link href="https://vjs.zencdn.net/7.20.3/video-js.css" rel="stylesheet" />
+<style>
+    .video-container {
+        position: relative;
+        width: 100%;
+        background: #000;
+        border-radius: 6px;
+        overflow: hidden;
+    }
+    .video-js {
+        width: 100%;
+        height: 0;
+        padding-top: 56.25%; /* 16:9 比例 */
+    }
+    .video-info {
+        background-color: #181818;
+        border-radius: 6px;
+        padding: 20px;
+        margin-top: 20px;
+    }
+    .video-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+    .btn-outline-light {
+        border-color: #404040;
+    }
+    .btn-outline-light:hover {
+        background-color: #333;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="{% url 'videoapp:video_list' %}" class="text-decoration-none text-muted">
+        <i class="bi bi-arrow-left"></i> 返回视频列表
+    </a>
+</div>
+
+<div class="video-container">
+    <video
+        id="my-video"
+        class="video-js vjs-big-play-centered vjs-theme-netflix"
+        controls
+        preload="auto"
+        poster="{% if video.thumbnail %}/static/{{ video.thumbnail }}{% else %}/static/img/default-thumbnail.jpg{% endif %}"
+        data-setup="{}"
+    >
+        <source src="{{ video.url }}" type="video/mp4" />
+        <p class="vjs-no-js">
+            要查看此视频，请启用JavaScript，并考虑升级到支持HTML5视频的浏览器
+        </p>
+    </video>
+</div>
+
+<div class="video-info">
+    <h1>{{ video.title }}</h1>
+    <p class="text-muted">时长: {{ video.duration }}</p>
+    
+    <div class="mt-4">
+        <h5>描述</h5>
+        <p>{{ video.description|linebreaks }}</p>
+    </div>
+    
+    <div class="video-actions">
+        <button class="btn btn-outline-light">
+            <i class="bi bi-pencil"></i> 编辑
+        </button>
+        <button class="btn btn-outline-light">
+            <i class="bi bi-share"></i> 分享
+        </button>
+        <button class="btn btn-outline-danger">
+            <i class="bi bi-trash"></i> 删除
+        </button>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
+<script>
+    var player = videojs('my-video');
+</script>
+{% endblock %}

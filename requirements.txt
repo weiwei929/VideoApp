@@ -1,0 +1,15 @@
+# VideoApp 依赖项
+# 基础依赖
+Django>=5.2.0
+Pillow>=10.0.0
+opencv-python>=4.7.0
+requests>=2.30.0
+python-dotenv>=1.0.0
+
+# 可选功能依赖
+django-environ>=0.11.2
+django-cors-headers>=4.0.0
+
+# 开发工具 - 仅在开发环境需要
+pylint-django>=2.5.0
+django-stubs>=5.0.0

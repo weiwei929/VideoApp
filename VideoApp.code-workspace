@@ -1,0 +1,22 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "python.analysis.extraPaths": [
+      "D:/Anaconda3/envs/videoapp/Lib/site-packages"
+    ],
+    "python.defaultInterpreterPath": "D:/Anaconda3/envs/videoapp/python.exe",
+    "python.languageServer": "Pylance",
+    "python.analysis.diagnosticMode": "workspace",
+    "python.analysis.typeCheckingMode": "basic",
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": true,
+    "python.linting.pylintArgs": [
+      "--load-plugins=pylint_django",
+      "--django-settings-module=config.settings"
+    ]
+  }
+}

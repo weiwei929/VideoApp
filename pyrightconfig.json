@@ -1,0 +1,12 @@
+{
+  "venvPath": "D:\\Anaconda3\\envs",
+  "venv": "videoapp",
+  "typeCheckingMode": "off",
+  "reportInconsistentOverload": false,
+  "reportNoOverloadImplementation": false,
+  "reportArgumentType": false,
+  "reportGeneralTypeIssues": false,
+  "reportMissingImports": false,
+  "reportMissingModuleSource": false,
+  "useLibraryCodeForTypes": true
+}

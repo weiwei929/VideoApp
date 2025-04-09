@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}关于 - VideoApp{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <h1 class="mb-4 text-info">关于 VideoApp</h1>
+        
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title text-warning">什么是 VideoApp?</h5>
+                <p class="card-text text-light">
+                    VideoApp 是一个个人视频管理和播放系统，为用户提供本地视频管理和 PikPak 云盘集成。该应用程序使您能够在一个地方组织、管理和观看您的所有视频内容。
+                </p>
+            </div>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title text-warning">主要功能</h5>
+                <ul class="list-unstyled text-light">
+                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> 本地视频管理与播放</li>
+                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> PikPak 云盘视频集成</li>
+                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> 高质量视频播放器</li>
+                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> 视频分类与搜索</li>
+                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> 简洁现代的用户界面</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title text-warning">技术栈</h5>
+                <p class="text-light">VideoApp 使用以下技术构建：</p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul class="list-unstyled text-light">
+                            <li class="mb-2"><i class="bi bi-code-slash text-info me-2"></i> Django (Python Web 框架)</li>
+                            <li class="mb-2"><i class="bi bi-code-slash text-info me-2"></i> Django REST Framework</li>
+                            <li class="mb-2"><i class="bi bi-code-slash text-info me-2"></i> Bootstrap 5</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="list-unstyled text-light">
+                            <li class="mb-2"><i class="bi bi-code-slash text-info me-2"></i> VideoJS (视频播放器)</li>
+                            <li class="mb-2"><i class="bi bi-code-slash text-info me-2"></i> PikPak API</li>
+                            <li class="mb-2"><i class="bi bi-code-slash text-info me-2"></i> SQLite 数据库</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

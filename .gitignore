@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+/media
+/static/admin
+/static/rest_framework
+
+# 虚拟环境
+venv/
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# 视频应用特定文件
+/media/videos/
+/media/thumbnails/
+!media/videos/.gitkeep
+!media/thumbnails/.gitkeep
+
+# 导出的 CSV 文件
+videos_export_*.csv
+
+# 其他
+.DS_Store
+.env

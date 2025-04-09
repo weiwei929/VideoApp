@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}编辑视频 - VideoApp{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-control {
+        background-color: #222;
+        border-color: #444;
+        color: #eee;
+    }
+    .form-control:focus {
+        background-color: #333;
+        border-color: #666;
+        color: #fff;
+    }
+    .form-text {
+        color: #aaa !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <h1 class="mb-4 text-info">编辑视频</h1>
+        
+        <div class="card">
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    {% if form.errors %}
+                    <div class="alert alert-danger">
+                        <strong>表单有错误，请修正以下问题：</strong>
+                        {{ form.errors }}
+                    </div>
+                    {% endif %}
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.title.id_for_label }}" class="form-label text-light">标题</label>
+                        <input type="text" name="title" id="{{ form.title.id_for_label }}" class="form-control" value="{{ form.title.value|default:'' }}" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.description.id_for_label }}" class="form-label text-light">描述</label>
+                        <textarea name="description" id="{{ form.description.id_for_label }}" class="form-control" rows="3">{{ form.description.value|default:'' }}</textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label text-light">当前视频文件</label>
+                        <p class="text-warning">{{ video.video_file.name }}</p>
+                        
+                        <label for="{{ form.video_file.id_for_label }}" class="form-label text-light">更换视频文件 (可选)</label>
+                        <input type="file" name="video_file" id="{{ form.video_file.id_for_label }}" class="form-control" accept="video/*">
+                        <div class="form-text">如果更换视频，系统将自动从新视频中提取首帧作为缩略图</div>
+                    </div>
+                    
+                    {% if video.thumbnail %}
+                    <div class="mb-4">
+                        <label class="form-label text-light">当前缩略图</label>
+                        <div class="mb-2">
+                            <img src="{{ video.thumbnail.url }}" alt="{{ video.title }}" class="img-fluid" style="max-height: 150px;">
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'vplayer:video_detail' video.pk %}" class="btn btn-outline-light">取消</a>
+                        <button type="submit" class="btn btn-info">保存修改</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
