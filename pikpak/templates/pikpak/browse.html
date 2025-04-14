@@ -1,0 +1,136 @@
+{% extends 'pikpak/base.html' %}
+{% load static %}
+
+{% block title %}PikPak文件浏览 - VideoApp{% endblock %}
+
+{% block extra_css %}
+<style>
+    .file-card {
+        transition: transform 0.2s;
+    }
+    .file-card:hover {
+        transform: translateY(-5px);
+        cursor: pointer;
+    }
+    .folder-icon {
+        color: #ffc107;
+        font-size: 3rem;
+    }
+    .file-icon {
+        color: #6c757d;
+        font-size: 3rem;
+    }
+    .video-icon {
+        color: #dc3545;
+        font-size: 3rem;
+    }
+    .thumbnail-container {
+        aspect-ratio: 16/9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #343a40;
+    }
+    .breadcrumb-item a {
+        text-decoration: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <!-- 标题和操作栏 -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>PikPak文件浏览</h2>
+        <div>
+            <a href="{% url 'pikpak:browse' %}?id={{ current_id }}" class="btn btn-outline-primary me-2">
+                <i class="bi bi-arrow-clockwise"></i> 刷新
+            </a>
+            <a href="{% url 'pikpak:logout' %}" class="btn btn-outline-danger">
+                <i class="bi bi-box-arrow-right"></i> 断开连接
+            </a>
+        </div>
+    </div>
+    
+    <!-- 面包屑导航 -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            {% for crumb in breadcrumbs %}
+                {% if forloop.last %}
+                    <li class="breadcrumb-item active">{{ crumb.name }}</li>
+                {% else %}
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'pikpak:browse' %}?id={{ crumb.id }}">{{ crumb.name }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ol>
+    </nav>
+    
+    <!-- 文件列表 -->
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 row-cols-xl-5 g-4">
+        {% for item in items %}
+        <div class="col">
+            <div class="card h-100 file-card" data-id="{{ item.id }}" data-type="{{ item.type }}">
+                <div class="thumbnail-container">
+                    {% if item.type == 'folder' %}
+                        <i class="bi bi-folder-fill folder-icon"></i>
+                    {% elif item.type == 'video' %}
+                        <i class="bi bi-film video-icon"></i>
+                    {% else %}
+                        <i class="bi bi-file-earmark file-icon"></i>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title text-truncate">{{ item.name }}</h5>
+                    <p class="card-text">
+                        <small class="text-muted">{{ item.size }}</small>
+                    </p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    {% if item.type == 'folder' %}
+                        <a href="{% url 'pikpak:browse' %}?id={{ item.id }}" class="btn btn-sm btn-outline-primary w-100">
+                            <i class="bi bi-folder2-open"></i> 打开
+                        </a>
+                    {% elif item.type == 'video' %}
+                        <a href="{% url 'pikpak:player' item.id %}" class="btn btn-sm btn-danger w-100">
+                            <i class="bi bi-play-fill"></i> 播放
+                        </a>
+                    {% else %}
+                        <button class="btn btn-sm btn-secondary w-100" disabled>
+                            <i class="bi bi-file-earmark"></i> 文件
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle me-2"></i> 此文件夹为空
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 为卡片添加点击事件
+        document.querySelectorAll('.file-card').forEach(function(card) {
+            card.addEventListener('click', function() {
+                const id = this.dataset.id;
+                const type = this.dataset.type;
+                
+                if (type === 'folder') {
+                    window.location.href = "{% url 'pikpak:browse' %}?id=" + id;
+                } else if (type === 'video') {
+                    window.location.href = "{% url 'pikpak:player' %}".replace('0/', id + '/');
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>配置PikPak WebDAV - VideoApp</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- 引入Netflix风格CSS -->
+    <link href="/static/pikpak/css/netflix-theme.css" rel="stylesheet">
+    <style>
+        .connect-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .connect-card {
+            background-color: rgba(51, 51, 51, 0.9);
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        .form-control, .form-select {
+            background-color: #333;
+            border: 1px solid #555;
+            color: #fff;
+            padding: 0.75rem 1rem;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            background-color: #444;
+            color: #fff;
+            border-color: var(--netflix-red);
+            box-shadow: 0 0 0 0.25rem rgba(229, 9, 20, 0.25);
+        }
+        
+        .form-label {
+            color: var(--netflix-light-gray);
+            margin-bottom: 0.5rem;
+        }
+        
+        .info-badge {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--netflix-light-gray);
+            padding: 0.3rem 0.7rem;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+            display: inline-block;
+        }
+
+        /* 返回主页按钮样式 */
+        .back-to-main {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            background-color: rgba(229, 9, 20, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .back-to-main:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+            background-color: rgba(229, 9, 20, 1);
+        }
+        
+        .back-to-main i {
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 添加返回主页悬浮按钮 -->
+    <a href="/" class="back-to-main" title="返回主页">
+        <i class="bi bi-house-fill"></i>
+    </a>
+
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/pikpak/">PikPak</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/pikpak/">首页</a>
+                    </li>
+                </ul>
+                <!-- 添加右侧返回主页链接 -->
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="bi bi-house-door me-1"></i>返回主应用
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 消息提示 -->
+    <div class="container-fluid mt-3">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <!-- 主内容 -->
+    <div class="container mt-5">
+        <div class="connect-container">
+            <h1 class="text-center mb-4">连接到 PikPak</h1>
+            <div class="connect-card">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-4">
+                        <h4 class="text-light">WebDAV 连接信息</h4>
+                        <p class="text-muted">
+                            请输入您的PikPak WebDAV服务器信息，连接成功后可以浏览和播放云盘中的视频。
+                        </p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="webdav_url" class="form-label">WebDAV URL</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-link-45deg"></i></span>
+                            <input type="url" class="form-control" id="webdav_url" name="webdav_url" 
+                                placeholder="例如：https://mypikpak.com/drive/webdav" required>
+                        </div>
+                        <div class="form-text text-muted">通常为：https://mypikpak.com/drive/webdav</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="webdav_username" class="form-label">用户名</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-person"></i></span>
+                            <input type="text" class="form-control" id="webdav_username" name="webdav_username" 
+                                placeholder="您的PikPak账户邮箱" required>
+                        </div>
+                        <div class="form-text text-muted">通常使用您的PikPak注册邮箱</div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="webdav_password" class="form-label">密码</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-key"></i></span>
+                            <input type="password" class="form-control" id="webdav_password" name="webdav_password" 
+                                placeholder="您的PikPak账户密码" required>
+                            <button class="btn btn-outline-secondary" type="button" id="toggle-password">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                        <div class="form-text text-muted">使用您的PikPak账户密码</div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-danger btn-lg">
+                            <i class="bi bi-cloud-check me-2"></i>连接
+                        </button>
+                        <a href="/pikpak/" class="btn btn-outline-light">
+                            <i class="bi bi-arrow-left me-2"></i>返回PikPak首页
+                        </a>
+                        <a href="/" class="btn btn-outline-light">
+                            <i class="bi bi-house-door me-2"></i>返回主应用
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="mt-5 py-3" style="background-color: rgba(0,0,0,0.3);">
+        <div class="container text-center">
+            <p class="text-muted mb-0">PikPak云盘 &copy; 2025 | <a href="/" class="text-muted">返回主应用</a></p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 切换密码可见性
+            document.getElementById('toggle-password').addEventListener('click', function() {
+                const passwordInput = document.getElementById('webdav_password');
+                const icon = this.querySelector('i');
+                
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    icon.classList.remove('bi-eye');
+                    icon.classList.add('bi-eye-slash');
+                } else {
+                    passwordInput.type = 'password';
+                    icon.classList.remove('bi-eye-slash');
+                    icon.classList.add('bi-eye');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

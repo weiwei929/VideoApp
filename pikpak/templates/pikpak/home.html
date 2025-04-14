@@ -1,0 +1,45 @@
+{% extends 'pikpak/base.html' %}
+{% load static %}
+
+{% block title %}PikPak - VideoApp{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card text-center">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">PikPak视频云盘</h3>
+                </div>
+                <div class="card-body">
+                    <img src="{% static 'pikpak/img/logo.svg' %}" alt="PikPak Logo" class="img-fluid mb-4" style="max-height: 120px;">
+                    
+                    <p class="lead">
+                        通过WebDAV连接到您的PikPak云盘，流畅播放您的视频。
+                    </p>
+                    
+                    {% if is_connected %}
+                        <div class="alert alert-success">
+                            <i class="bi bi-check-circle-fill me-2"></i> 您已连接到PikPak WebDAV
+                        </div>
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'pikpak:browse' %}" class="btn btn-primary btn-lg">
+                                <i class="bi bi-folder2-open"></i> 浏览文件
+                            </a>
+                            <a href="{% url 'pikpak:logout' %}" class="btn btn-outline-danger">
+                                <i class="bi bi-box-arrow-right"></i> 断开连接
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'pikpak:connect' %}" class="btn btn-primary btn-lg">
+                                <i class="bi bi-cloud-plus"></i> 连接到PikPak
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

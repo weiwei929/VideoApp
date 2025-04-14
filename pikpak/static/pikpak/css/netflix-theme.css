@@ -1,0 +1,514 @@
+/* Netflix风格主题 - PikPak模块 */
+
+:root {
+  --netflix-red: #e50914;
+  --netflix-dark: #141414;
+  --netflix-black: #000000;
+  --netflix-gray: #333333;
+  --netflix-light-gray: #b3b3b3;
+  --netflix-white: #ffffff;
+}
+
+body {
+  background-color: var(--netflix-black);
+  color: var(--netflix-white);
+  font-family: 'Netflix Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.navbar {
+  background-color: var(--netflix-black) !important;
+  padding: 0.5rem 4%;
+}
+
+.navbar-dark .navbar-brand {
+  color: var(--netflix-red);
+  font-weight: bold;
+  font-size: 1.8rem;
+}
+
+.card {
+  background-color: var(--netflix-gray);
+  border: none;
+  transition: transform 0.3s ease-in-out;
+}
+
+.card:hover {
+  transform: scale(1.05);
+  z-index: 1;
+}
+
+.card-header {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.card-body {
+  color: var(--netflix-white);
+}
+
+.btn-primary {
+  background-color: var(--netflix-red);
+  border-color: var(--netflix-red);
+}
+
+.btn-primary:hover, .btn-primary:focus {
+  background-color: #f40612;
+  border-color: #f40612;
+}
+
+.btn-outline-primary {
+  color: var(--netflix-white);
+  border-color: var(--netflix-white);
+}
+
+.btn-outline-primary:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--netflix-white);
+  border-color: var(--netflix-white);
+}
+
+/* 视频项目卡片 */
+.video-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.video-card img {
+  width: 100%;
+  object-fit: cover;
+  transition: all 0.3s;
+}
+
+.video-card:hover img {
+  transform: scale(1.1);
+  opacity: 0.7;
+}
+
+.video-card .card-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 0.5rem;
+}
+
+.video-card .play-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 3rem;
+  color: var(--netflix-red);
+}
+
+.video-card:hover .play-btn {
+  opacity: 1;
+}
+
+/* 视图切换按钮 */
+.view-toggle-btn {
+  background-color: transparent;
+  color: var(--netflix-light-gray);
+  border: none;
+  padding: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.view-toggle-btn.active {
+  color: var(--netflix-white);
+}
+
+.view-toggle-btn:hover {
+  color: var(--netflix-white);
+}
+
+/* 列表视图样式 */
+.list-view-item {
+  background-color: rgba(51, 51, 51, 0.5);
+  border-radius: 4px;
+  margin-bottom: 8px;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+.list-view-item:hover {
+  background-color: rgba(51, 51, 51, 0.8);
+}
+
+.list-view-item .item-icon {
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.list-view-item .item-details {
+  flex-grow: 1;
+  padding: 12px 0;
+}
+
+.list-view-item .item-actions {
+  padding-right: 12px;
+}
+
+/* 文件夹和文件图标颜色 */
+.folder-icon {
+  color: #ffc107;
+}
+
+.video-icon {
+  color: var(--netflix-red);
+}
+
+.file-icon {
+  color: var(--netflix-light-gray);
+}
+
+.parent-folder-icon {
+  color: #28a745;
+}
+
+/* 图片文件图标样式 */
+.image-icons {
+    color: #17a2b8;
+    font-size: 3rem;
+}
+
+/* 面包屑导航 */
+.breadcrumb {
+  background-color: transparent;
+  padding: 0.5rem 0;
+}
+
+.breadcrumb-item a {
+  color: var(--netflix-light-gray);
+  text-decoration: none;
+}
+
+.breadcrumb-item.active {
+  color: var(--netflix-white);
+}
+
+.breadcrumb-item a:hover {
+  color: var(--netflix-white);
+}
+
+/* 自定义alert样式 */
+.alert {
+  background-color: var(--netflix-gray);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--netflix-white);
+}
+
+.alert-success {
+  border-left: 4px solid #28a745;
+}
+
+.alert-info {
+  border-left: 4px solid #17a2b8;
+}
+
+.alert-warning {
+  border-left: 4px solid #ffc107;
+}
+
+.alert-danger {
+  border-left: 4px solid var(--netflix-red);
+}
+
+/* 播放器容器 */
+.video-container {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 150px);
+  min-height: 400px;
+  background-color: var(--netflix-black);
+  transition: aspect-ratio 0.3s ease-in-out;
+}
+
+/* 视频容器过渡动画 */
+.video-container {
+  transition: all 0.3s ease-in-out;
+}
+
+.video-container.landscape {
+  aspect-ratio: 16/9;
+}
+
+.video-container.portrait {
+  aspect-ratio: 9/16;
+}
+
+/* Placeholder图像 */
+.thumbnail-container {
+  aspect-ratio: 16/9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--netflix-gray);
+}
+
+/* 父文件夹特殊样式 */
+.parent-folder-card {
+  background-color: rgba(40, 167, 69, 0.2);
+  border: 1px solid rgba(40, 167, 69, 0.3);
+}
+
+/* 视频播放器控制栏优化 */
+.vjs-theme-netflix .vjs-control-bar {
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    bottom: 0;
+    height: 3em;
+}
+
+.vjs-theme-netflix .vjs-play-progress {
+    background-color: var(--netflix-red);
+}
+
+.vjs-theme-netflix .vjs-progress-control {
+    flex: 1;
+}
+
+.vjs-theme-netflix .vjs-slider:focus,
+.vjs-theme-netflix .vjs-slider:active {
+    text-shadow: none;
+    box-shadow: none;
+    outline: none;
+}
+
+.vjs-theme-netflix .vjs-progress-holder {
+    height: 0.5em;
+    margin: 0;
+}
+
+.vjs-theme-netflix .vjs-play-progress::before {
+    color: var(--netflix-red);
+    font-size: 1em;
+    top: -0.3em;
+}
+
+/* 确保竖屏视频播放时正确显示控制栏 */
+.portrait .video-js .vjs-control-bar {
+    width: 100%;
+}
+
+/* 优化全屏模式 */
+.vjs-fullscreen .vjs-tech {
+    object-fit: contain;
+}
+
+/* 视频播放器增强样式 */
+.video-js {
+    /* 保持缩放比例 */
+    object-fit: contain;
+    background-color: black;
+}
+
+.video-js .vjs-tech {
+    /* 确保视频在容器内居中且保持比例 */
+    object-fit: contain;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.3s ease;
+}
+
+/* 视频旋转类 */
+.video-rotate-90 .vjs-tech {
+    transform: rotate(90deg) scale(1);
+}
+
+.video-rotate-180 .vjs-tech {
+    transform: rotate(180deg) scale(1);
+}
+
+.video-rotate-270 .vjs-tech {
+    transform: rotate(270deg) scale(1);
+}
+
+/* 图片查看器样式 */
+.image-viewer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    z-index: 9999;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.image-viewer.active {
+    opacity: 1;
+}
+
+.image-display {
+    transition: opacity 0.3s ease;
+}
+
+/* 图片查看器按钮效果 */
+.control-btn {
+    opacity: 0.7;
+    transition: all 0.3s ease;
+}
+
+.control-btn:hover:not(:disabled) {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.control-btn:disabled {
+    cursor: not-allowed;
+}
+
+/* 移动设备上的视频播放优化 */
+@media (max-width: 768px) {
+  .video-container {
+    height: auto !important;
+    min-height: 300px !important;
+  }
+  
+  .video-container.landscape {
+    aspect-ratio: 16/9;
+    max-height: none;
+  }
+  
+  .video-container.portrait {
+    aspect-ratio: 9/16;
+    max-width: 80%;
+    margin: 0 auto;
+  }
+  
+  .video-details {
+    padding: 0.5rem 0;
+  }
+  
+  .video-title {
+    font-size: 1.5rem;
+  }
+  
+  .orientation-toggle {
+    padding: 3px 6px;
+    font-size: 0.8rem;
+    right: 45px;
+  }
+}
+
+/* 提高全屏模式质量 */
+.vjs-fullscreen .vjs-tech {
+  object-fit: contain;
+}
+
+/* 竖屏视频播放时的优化 */
+.portrait .vjs-tech {
+  object-fit: contain;
+}
+
+/* 视频旋转功能样式 */
+.video-js .vjs-tech {
+    transition: transform 0.3s ease;
+    transform-origin: center center;
+}
+
+.video-rotate-90 .vjs-tech {
+    transform: rotate(90deg);
+}
+
+.video-rotate-180 .vjs-tech {
+    transform: rotate(180deg);
+}
+
+.video-rotate-270 .vjs-tech {
+    transform: rotate(270deg);
+}
+
+.video-rotate-90 video {
+    transform: rotate(90deg);
+}
+
+.video-rotate-180 video {
+    transform: rotate(180deg);
+}
+
+.video-rotate-270 video {
+    transform: rotate(270deg);
+}
+
+/* 90度和270度旋转时可能需要调整宽高比 */
+.video-rotate-90 .vjs-tech,
+.video-rotate-270 .vjs-tech {
+    /* 当视频旋转90/270度时调整尺寸 */
+    max-width: initial;
+    max-height: initial;
+}
+
+/* 添加按钮之间的间距 */
+.rotate-toggle {
+    margin-right: 10px;
+}
+
+/* 旋转指示器样式 */
+.rotation-indicator {
+    background-color: rgba(23, 162, 184, 0.7);
+    color: white;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 0.8rem;
+    position: absolute;
+    top: 15px;
+    left: 80px;
+    z-index: 10;
+    display: none;
+}
+
+/* 功能按钮样式 */
+.function-btn {
+    background-color: #333333;
+    color: #ffffff;
+    border: 1px solid #444444;
+    margin-right: 10px;
+    transition: background-color 0.2s;
+}
+
+.function-btn:hover {
+    background-color: #444444;
+    color: #ffffff;
+}
+
+/* 移动设备优化 */
+@media (max-width: 768px) {
+    .rotate-toggle,
+    .orientation-toggle {
+        padding: 3px 6px;
+        font-size: 0.7rem;
+    }
+    
+    .rotate-toggle {
+        right: 120px;
+    }
+    
+    .orientation-toggle {
+        right: 50px;
+    }
+    
+    .rotation-indicator {
+        font-size: 0.7rem;
+        padding: 2px 5px;
+        left: 15px;
+        top: 45px;
+    }
+}

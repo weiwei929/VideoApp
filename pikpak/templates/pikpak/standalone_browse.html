@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PikPak文件浏览</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="/static/pikpak/css/netflix-theme.css" rel="stylesheet">
+    <style>
+        .file-card {
+            transition: transform 0.2s;
+        }
+        .file-card:hover {
+            transform: translateY(-5px);
+            cursor: pointer;
+        }
+        .folder-icon {
+            color: #ffc107;
+            font-size: 3rem;
+        }
+        .file-icon {
+            color: #6c757d;
+            font-size: 3rem;
+        }
+        .video-icon {
+            color: #dc3545;
+            font-size: 3rem;
+        }
+        .thumbnail-container {
+            aspect-ratio: 16/9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #343a40;
+        }
+        .breadcrumb-item a {
+            text-decoration: none;
+        }
+        .parent-folder-icon {
+            color: #28a745;  /* 绿色 */
+            font-size: 3rem;
+        }
+        .parent-folder-card {
+            background-color: rgba(40, 167, 69, 0.1);  /* 淡绿色背景 */
+            border: 1px solid rgba(40, 167, 69, 0.2);
+        }
+        .back-button {
+            margin-right: 10px;
+        }
+        .hidden {
+            display: none !important;
+        }
+        
+        /* 返回主页按钮样式 */
+        .back-to-main {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            background-color: rgba(229, 9, 20, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .back-to-main:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+            background-color: rgba(229, 9, 20, 1);
+        }
+        
+        .back-to-main i {
+            font-size: 24px;
+        }
+
+        /* 添加文件大小高亮样式 */
+        .file-size {
+            display: inline-block;
+            background-color: rgba(229, 9, 20, 0.2);
+            color: #ff6b6b;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 500;
+            margin-top: 5px;
+        }
+        
+        /* 为不同大小文件设置不同颜色 */
+        .size-small {
+            background-color: rgba(40, 167, 69, 0.2);
+            color: #2ecc71;
+        }
+        
+        .size-medium {
+            background-color: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+        }
+        
+        .size-large {
+            background-color: rgba(229, 9, 20, 0.2);
+            color: #ff6b6b;
+        }
+
+        /* 图片缩略图样式 */
+        .thumbnail-container.image-thumb {
+            background-color: #222;
+            overflow: hidden;
+        }
+        
+        .thumbnail-container.image-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+        
+        .file-card:hover .thumbnail-container.image-thumb img {
+            transform: scale(1.05);
+        }
+        
+        /* 图片图标颜色 */
+        .image-icon {
+            color: #17a2b8; 
+            font-size: 3rem;
+        }
+        
+        /* 简单的图片查看器样式 */
+        .image-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-image {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-close:hover {
+            background: rgba(229, 9, 20, 0.8);
+        }
+    </style>
+</head>
+<body>
+    <!-- 添加返回主页悬浮按钮 -->
+    <a href="/" class="back-to-main" title="返回主页">
+        <i class="bi bi-house-fill"></i>
+    </a>
+
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/pikpak/">PikPak云盘</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/pikpak/">首页</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/pikpak/browse/">浏览文件</a>
+                    </li>
+                </ul>
+                <!-- 添加右侧返回主页链接 -->
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="bi bi-house-door me-1"></i>返回主应用
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 消息提示 -->
+    <div class="container mt-3">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <!-- 主内容 -->
+    <div class="container-fluid mt-4">
+        <!-- 标题和操作栏 -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2>PikPak文件浏览</h2>
+            <div class="d-flex align-items-center">
+                <!-- 视图切换按钮 -->
+                <div class="me-3">
+                    <button class="view-toggle-btn active" id="card-view-btn" title="卡片视图">
+                        <i class="bi bi-grid-3x3-gap-fill"></i>
+                    </button>
+                    <button class="view-toggle-btn" id="list-view-btn" title="列表视图">
+                        <i class="bi bi-list-ul"></i>
+                    </button>
+                </div>
+                {% if not is_root %}
+                <a href="/pikpak/browse/?id={{ parent_id }}" class="btn btn-success back-button">
+                    <i class="bi bi-arrow-up"></i> 返回上级
+                </a>
+                {% endif %}
+                <a href="/pikpak/browse/?id={{ current_id }}" class="btn btn-outline-primary me-2">
+                    <i class="bi bi-arrow-clockwise"></i> 刷新
+                </a>
+                <a href="/pikpak/logout/" class="btn btn-outline-danger">
+                    <i class="bi bi-box-arrow-right"></i> 断开连接
+                </a>
+            </div>
+        </div>
+        
+        <!-- 面包屑导航 -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                {% for crumb in breadcrumbs %}
+                    {% if forloop.last %}
+                        <li class="breadcrumb-item active">{{ crumb.name }}</li>
+                    {% else %}
+                        <li class="breadcrumb-item">
+                            <a href="/pikpak/browse/?id={{ crumb.id }}">{{ crumb.name }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ol>
+        </nav>
+        
+        <!-- 卡片视图 -->
+        <div id="card-view" class="file-view">
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 row-cols-xl-5 g-4">
+                {% if not is_root %}
+                <!-- 添加返回上级目录卡片 -->
+                <div class="col">
+                    <div class="card h-100 file-card parent-folder-card" data-id="{{ parent_id }}" data-type="parent">
+                        <div class="thumbnail-container">
+                            <i class="bi bi-arrow-up-circle-fill parent-folder-icon" style="font-size: 3rem;"></i>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title text-truncate">返回上级目录</h5>
+                            <p class="card-text">
+                                <small class="text-muted">上级目录</small>
+                            </p>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a href="/pikpak/browse/?id={{ parent_id }}" class="btn btn-sm btn-success w-100">
+                                <i class="bi bi-arrow-up"></i> 返回上级
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% for item in items %}
+                <div class="col">
+                    <div class="card h-100 file-card" data-id="{{ item.id }}" data-type="{{ item.type }}">
+                        <div class="thumbnail-container">
+                            {% if item.type == 'folder' %}
+                                <i class="bi bi-folder-fill folder-icon" style="font-size: 3rem;"></i>
+                            {% elif item.type == 'video' %}
+                                <i class="bi bi-film video-icon" style="font-size: 3rem;"></i>
+                            {% else %}
+                                <i class="bi bi-file-earmark file-icon" style="font-size: 3rem;"></i>
+                            {% endif %}
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title text-truncate">{{ item.name }}</h5>
+                            
+                            <!-- 文件大小显示 -->
+                            {% if item.type == 'video' %}
+                                <p class="card-text">
+                                    <span class="file-size 
+                                        {% if item.raw_size < 104857600 %}size-small{% elif item.raw_size < 1073741824 %}size-medium{% else %}size-large{% endif %}">
+                                        <i class="bi bi-hdd"></i> {{ item.size }}
+                                    </span>
+                                </p>
+                            {% else %}
+                                <p class="card-text">
+                                    <small class="text-muted">{{ item.size }}</small>
+                                </p>
+                            {% endif %}
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            {% if item.type == 'folder' %}
+                                <a href="/pikpak/browse/?id={{ item.id }}" class="btn btn-sm btn-outline-primary w-100">
+                                    <i class="bi bi-folder2-open"></i> 打开
+                                </a>
+                            {% elif item.type == 'video' %}
+                                <a href="/pikpak/player/{{ item.id }}/" class="btn btn-sm btn-danger w-100">
+                                    <i class="bi bi-play-fill"></i> 播放
+                                </a>
+                            {% else %}
+                                <button class="btn btn-sm btn-secondary w-100" disabled>
+                                    <i class="bi bi-file-earmark"></i> 文件
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                
+                {% if is_root and items|length == 0 %}
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i> 此文件夹为空
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- 列表视图 -->
+        <div id="list-view" class="file-view hidden">
+            <div class="list-group">
+                {% if not is_root %}
+                <!-- 添加返回上级目录项 -->
+                <div class="list-view-item" data-id="{{ parent_id }}" data-type="parent">
+                    <div class="item-icon">
+                        <i class="bi bi-arrow-up-circle-fill parent-folder-icon"></i>
+                    </div>
+                    <div class="item-details">
+                        <h5 class="mb-1">返回上级目录</h5>
+                        <small class="text-muted">上级目录</small>
+                    </div>
+                    <div class="item-actions">
+                        <a href="/pikpak/browse/?id={{ parent_id }}" class="btn btn-sm btn-success">
+                            <i class="bi bi-arrow-up"></i> 返回上级
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% for item in items %}
+                <div class="list-view-item" data-id="{{ item.id }}" data-type="{{ item.type }}">
+                    <div class="item-icon">
+                        {% if item.type == 'folder' %}
+                            <i class="bi bi-folder-fill folder-icon"></i>
+                        {% elif item.type == 'video' %}
+                            <i class="bi bi-film video-icon"></i>
+                        {% else %}
+                            <i class="bi bi-file-earmark file-icon"></i>
+                        {% endif %}
+                    </div>
+                    <div class="item-details">
+                        <h5 class="mb-1 text-truncate">{{ item.name }}</h5>
+                        
+                        <!-- 修改文件大小显示 -->
+                        {% if item.type == 'video' %}
+                            <span class="file-size 
+                                {% if item.raw_size < 104857600 %}size-small{% elif item.raw_size < 1073741824 %}size-medium{% else %}size-large{% endif %}">
+                                <i class="bi bi-hdd"></i> {{ item.size }}
+                            </span>
+                            <small class="text-muted ms-2">| {{ item.modified }}</small>
+                        {% else %}
+                            <small class="text-muted">{{ item.size }} | {{ item.modified }}</small>
+                        {% endif %}
+                    </div>
+                    <div class="item-actions">
+                        {% if item.type == 'folder' %}
+                            <a href="/pikpak/browse/?id={{ item.id }}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-folder2-open"></i> 打开
+                            </a>
+                        {% elif item.type == 'video' %}
+                            <a href="/pikpak/player/{{ item.id }}/" class="btn btn-sm btn-danger">
+                                <i class="bi bi-play-fill"></i> 播放
+                            </a>
+                        {% else %}
+                            <button class="btn btn-sm btn-secondary" disabled>
+                                <i class="bi bi-file-earmark"></i> 文件
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+                
+                {% if items|length == 0 %}
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle me-2"></i> 此文件夹为空
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- 简单的图片查看器 -->
+    <div id="imageModal" class="image-modal">
+        <button class="modal-close" id="closeModal">&times;</button>
+        <img id="modalImage" class="modal-image" src="" alt="图片预览">
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="mt-5 py-3" style="background-color: rgba(0,0,0,0.3);">
+        <div class="container text-center">
+            <p class="text-muted mb-0">PikPak云盘 &copy; 2025 | <a href="/" class="text-muted">返回主应用</a></p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 视图切换功能
+            const cardViewBtn = document.getElementById('card-view-btn');
+            const listViewBtn = document.getElementById('list-view-btn');
+            const cardView = document.getElementById('card-view');
+            const listView = document.getElementById('list-view');
+            
+            // 保存视图偏好到localStorage
+            function saveViewPreference(viewType) {
+                localStorage.setItem('pikpak_view_preference', viewType);
+            }
+            
+            // 从localStorage获取视图偏好
+            function getViewPreference() {
+                return localStorage.getItem('pikpak_view_preference') || 'card';
+            }
+            
+            // 应用视图偏好
+            function applyViewPreference(viewType) {
+                if (viewType === 'list') {
+                    cardView.classList.add('hidden');
+                    listView.classList.remove('hidden');
+                    cardViewBtn.classList.remove('active');
+                    listViewBtn.classList.add('active');
+                } else {
+                    listView.classList.add('hidden');
+                    cardView.classList.remove('hidden');
+                    listViewBtn.classList.remove('active');
+                    cardViewBtn.classList.add('active');
+                }
+            }
+            
+            // 初始化视图
+            applyViewPreference(getViewPreference());
+            
+            // 设置视图切换事件监听器
+            cardViewBtn.addEventListener('click', function() {
+                applyViewPreference('card');
+                saveViewPreference('card');
+            });
+            
+            listViewBtn.addEventListener('click', function() {
+                applyViewPreference('list');
+                saveViewPreference('list');
+            });
+            
+            // 为卡片/列表项添加点击事件
+            document.querySelectorAll('.file-card, .list-view-item').forEach(function(item) {
+                item.addEventListener('click', function(event) {
+                    // 不要在按钮点击时触发
+                    if (event.target.tagName === 'BUTTON' || 
+                        event.target.tagName === 'A' || 
+                        event.target.parentElement.tagName === 'BUTTON' ||
+                        event.target.parentElement.tagName === 'A') {
+                        return;
+                    }
+                    
+                    const id = this.dataset.id;
+                    const type = this.dataset.type;
+                    
+                    if (type === 'folder' || type === 'parent') {
+                        window.location.href = "/pikpak/browse/?id=" + id;
+                    } else if (type === 'video') {
+                        window.location.href = "/pikpak/player/" + id + "/";
+                    }
+                });
+            });
+            
+            // 图片处理相关
+            const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg'];
+            const imageModal = document.getElementById('imageModal');
+            const modalImage = document.getElementById('modalImage');
+            const closeModal = document.getElementById('closeModal');
+            
+            // 处理图片文件
+            function setupImageViewer() {
+                console.log("初始化图片查看功能...");
+                
+                // 处理所有文件卡片，检测图片
+                document.querySelectorAll('.file-card').forEach(function(card) {
+                    const titleElement = card.querySelector('.card-title');
+                    if (!titleElement) return;
+                    
+                    const fileName = titleElement.textContent;
+                    const fileId = card.getAttribute('data-id');
+                    const fileExt = fileName.split('.').pop().toLowerCase();
+                    
+                    // 检测是否为图片文件
+                    if (imageExtensions.includes(fileExt)) {
+                        console.log(`找到图片文件: ${fileName}, ID: ${fileId}`);
+                        
+                        // 设置为图片类型
+                        card.setAttribute('data-type', 'image');
+                        
+                        // 获取缩略图容器
+                        const thumbContainer = card.querySelector('.thumbnail-container');
+                        if (thumbContainer) {
+                            // 设置为图片缩略图
+                            thumbContainer.classList.add('image-thumb');
+                            thumbContainer.innerHTML = '';
+                            
+                            // 创建并添加图片
+                            const img = document.createElement('img');
+                            img.src = `/pikpak/image/${fileId}/`;
+                            img.alt = fileName;
+                            
+                            // 图片加载失败处理
+                            img.onerror = function() {
+                                console.error(`缩略图加载失败: ${fileName}`);
+                                thumbContainer.innerHTML = '<i class="bi bi-file-earmark-image image-icon"></i>';
+                            };
+                            
+                            thumbContainer.appendChild(img);
+                            
+                            // 添加点击预览功能
+                            card.addEventListener('click', function(e) {
+                                if (!e.target.closest('button') && !e.target.closest('a')) {
+                                    modalImage.src = `/pikpak/image/${fileId}/`;
+                                    imageModal.style.display = 'flex';
+                                }
+                            });
+                        }
+                    }
+                });
+                
+                // 处理列表视图中的图片
+                document.querySelectorAll('.list-view-item').forEach(function(item) {
+                    const titleElement = item.querySelector('.mb-1');
+                    if (!titleElement) return;
+                    
+                    const fileName = titleElement.textContent;
+                    const fileId = item.getAttribute('data-id');
+                    const fileExt = fileName.split('.').pop().toLowerCase();
+                    
+                    // 检测是否为图片文件
+                    if (imageExtensions.includes(fileExt)) {
+                        console.log(`找到图片文件(列表): ${fileName}, ID: ${fileId}`);
+                        
+                        // 设置为图片类型
+                        item.setAttribute('data-type', 'image');
+                        
+                        // 更换图标
+                        const iconElement = item.querySelector('.item-icon i');
+                        if (iconElement) {
+                            iconElement.className = 'bi bi-file-earmark-image image-icon';
+                        }
+                        
+                        // 添加点击预览功能
+                        item.addEventListener('click', function(e) {
+                            if (!e.target.closest('button') && !e.target.closest('a')) {
+                                modalImage.src = `/pikpak/image/${fileId}/`;
+                                imageModal.style.display = 'flex';
+                            }
+                        });
+                    }
+                });
+                
+                // 图片查看器关闭功能
+                closeModal.addEventListener('click', function() {
+                    imageModal.style.display = 'none';
+                    modalImage.src = ''; // 清除图片源
+                });
+                
+                // 点击背景关闭
+                imageModal.addEventListener('click', function(e) {
+                    if (e.target === imageModal) {
+                        imageModal.style.display = 'none';
+                        modalImage.src = '';
+                    }
+                });
+                
+                // ESC键关闭
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && imageModal.style.display === 'flex') {
+                        imageModal.style.display = 'none';
+                        modalImage.src = '';
+                    }
+                });
+                
+                console.log("图片查看功能初始化完成");
+            }
+            
+            // 启动图片处理功能
+            setupImageViewer();
+        });
+    </script>
+</body>
+</html>
